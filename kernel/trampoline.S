@@ -28,7 +28,7 @@ uservec:
 
         # save user a0 in sscratch so
         # a0 can be used to get at TRAPFRAME.
-        csrw sscratch, a0
+        csrw sscratch, a0 # csrw，把一个通用寄存器中的值写入 CSR 中。如：csrw mstatus, t0，将 t0 的值写入 mstatus
 
         # each process has a separate p->trapframe memory area,
         # but it's mapped to the same virtual address
@@ -68,8 +68,8 @@ uservec:
         sd t6, 280(a0)
 
 	# save the user a0 in p->trapframe->a0
-        csrr t0, sscratch
-        sd t0, 112(a0)
+        csrr t0, sscratch  # csrr，读取一个 CSR 的值到通用寄存器。如：csrr t0, mstatus，读取 mstatus 的值到 t0 中
+        sd t0, 112(a0)   #  将t0 保存到112(a0), 也就是 a0
 
         # initialize kernel stack pointer, from p->trapframe->kernel_sp
         ld sp, 8(a0)
@@ -102,14 +102,14 @@ userret:
         # userret(pagetable)
         # called by usertrapret() in trap.c to
         # switch from kernel to user.
-        # a0: user page table, for satp.
+        # a0: user page table, for satp.  这里的a0寄存器表示的是第一个参数，也就是 usertrapret 的变量 satp
 
         # switch to the user page table.
         sfence.vma zero, zero
-        csrw satp, a0
+        csrw satp, a0         # csrw，把一个通用寄存器中的值写入 CSR 中。如：csrw mstatus, t0，将 t0 的值写入 mstatus
         sfence.vma zero, zero
 
-        li a0, TRAPFRAME
+        li a0, TRAPFRAME      # li,rd,imm    它把一个立即数imm加载到rd寄存器中
 
         # restore all but a0 from TRAPFRAME
         ld ra, 40(a0)
@@ -144,8 +144,17 @@ userret:
         ld t6, 280(a0)
 
 	# restore user a0
-        ld a0, 112(a0)
+        ld a0, 112(a0)    #  读取112(a0), 到a0上
         
         # return to user mode and user pc.
         # usertrapret() set up sstatus and sepc.
         sret
+
+
+# 上面的代码中 a0 表示了一个通用寄存器
+# 在 uservec中， 基本操作就是，使用sscratch来保存a0的内容，然后使用a0进行一些赋值操作
+# 最后将 sscratch 也保存到 p->trapframe->a0 中。如：csrw
+# 在 userret，a0 表示了函数的第一个参数，也就是usertrapret函数 的变量 satp
+# 然后使用a0进行一个赋值操作，最后再将 p->trapframe->a0 的值，赋值到a0中，返回到用户空间
+#
+# 总结就是，使用a0 做了一些腾挪操作
