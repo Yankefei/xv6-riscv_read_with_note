@@ -8,7 +8,7 @@
         # to work when it switches page tables.
         # kernel.ld causes this code to start at 
         # a page boundary.
-        #
+        # 注意，该代码由 kernel.ld 加载
 
 #include "riscv.h"
 #include "memlayout.h"
