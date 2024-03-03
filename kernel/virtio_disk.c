@@ -229,7 +229,7 @@ virtio_disk_rw(struct buf *b, int write)
     if(alloc3_desc(idx) == 0) {
       break;
     }
-    sleep(&disk.free[0], &disk.vdisk_lock);
+    sleep(&disk.free[0], &disk.vdisk_lock);     // quickly return...  todo homework
   }
 
   // format the three descriptors.

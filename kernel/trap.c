@@ -43,7 +43,7 @@ usertrap(void)
 
   // send interrupts and exceptions to kerneltrap(),
   // since we're now in the kernel.
-  w_stvec((uint64)kernelvec);
+  w_stvec((uint64)kernelvec);   // 非常关键的地方，因为这里才设置 stvec 的寄存器，让他开始处理内核异常函数
 
   struct proc *p = myproc();
   
@@ -98,7 +98,7 @@ usertrapret(void)
 
   // send syscalls, interrupts, and exceptions to uservec in trampoline.S
   uint64 trampoline_uservec = TRAMPOLINE + (uservec - trampoline);
-  w_stvec(trampoline_uservec);
+  w_stvec(trampoline_uservec);           // 恢复为用户的trap处理逻辑，即将离开内核态
 
   // set up trapframe values that uservec will need when
   // the process next traps into the kernel.
@@ -209,7 +209,7 @@ devintr()
       clockintr();
     }
     
-    // acknowledge the software interrupt by clearing
+    // acknowledge 告知 the software interrupt by clearing
     // the SSIP bit in sip.
     w_sip(r_sip() & ~2);
 

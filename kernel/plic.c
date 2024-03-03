@@ -29,7 +29,7 @@ plicinithart(void)
   *(uint32*)PLIC_SPRIORITY(hart) = 0;
 }
 
-// ask the PLIC what interrupt we should serve.
+// ask the PLIC what interrupt we should serve. PLIC, 平台级中断控制器，用来将外部的全局中断请求处理后转至中断目标
 int
 plic_claim(void)
 {

@@ -126,7 +126,7 @@ uartputc_sync(int c)
   pop_off();
 }
 
-// if the UART is idle, and a character is waiting
+// if the UART is idle, and a character is waiting    //   start the sevice transmitting(if it isn't already)
 // in the transmit buffer, send it.
 // caller must hold uart_tx_lock.
 // called from both the top- and bottom-half.
@@ -169,8 +169,8 @@ uartgetc(void)
   }
 }
 
-// handle a uart interrupt, raised because input has
-// arrived, or the uart is ready for more output, or
+// handle a uart interrupt, raised because input has       // each time the UART finished sending a byte, it generates an interrupt. (write)
+// arrived, or the uart is ready for more output, or       // when the user types a character, the UART hardware asks the RISC-V to raise an interupt, which activates xv'6 trap handler.(ready)
 // both. called from devintr().
 void
 uartintr(void)

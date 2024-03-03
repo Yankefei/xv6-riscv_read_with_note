@@ -116,10 +116,10 @@ write_head(void)
 static void
 recover_from_log(void)
 {
-  read_head();
-  install_trans(1); // if committed, copy from log to disk
-  log.lh.n = 0;
-  write_head(); // clear the log
+  read_head();                                                // 从log的磁盘header区域，的索引，读取到 log的内存区域
+  install_trans(1); // if committed, copy from log to disk    // 根据内存区域，对log的数据进行写入磁盘
+  log.lh.n = 0;                                               // 清理cache中的缓存数量值
+  write_head(); // clear the log                              // 然后对log的磁盘header区域，进行清理
 }
 
 // called at the start of each FS system call.
@@ -194,11 +194,11 @@ static void
 commit()
 {
   if (log.lh.n > 0) {
-    write_log();     // Write modified blocks from cache to log
-    write_head();    // Write header to disk -- the real commit
-    install_trans(0); // Now install writes to home locations
-    log.lh.n = 0;
-    write_head();    // Erase the transaction from the log
+    write_log();     // Write modified blocks from cache to log    // 保存cache的内容到log磁盘区域的非header区域
+    write_head();    // Write header to disk -- the real commit    // 保存内存中block的索引序号到 log磁盘区域的第一个buf中，第一个buf的data，就是logheader, 刚好可以放下
+    install_trans(0); // Now install writes to home locations      // 按照索引，将log磁盘中的数据写入最终磁盘区域，buf索引--
+    log.lh.n = 0;                                                  // 清理cache的数量值
+    write_head();    // Erase the transaction from the log         // 完成后，将log磁盘中的第一个buf, header的数据清空
   }
 }
 

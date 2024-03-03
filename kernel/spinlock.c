@@ -108,3 +108,29 @@ pop_off(void)
   if(c->noff == 0 && c->intena)
     intr_on();
 }
+
+
+/**
+ * 
+__sync_val_compare_and_swap  这个函数是哪里提供的？
+__sync_val_compare_and_swap 是一个原子操作函数，由 GNU编译器集合（GCC） 提供1。这个函数会比较 __compVal 的值和 __p 指向的变量的值。
+如果它们相等，__exchVal 的值就会被存储在 __p 指向的地址中；否则，不执行任何操作2。当这个函数被调用时，会创建一个完整的内存屏障2。
+这个函数的原型是 T __sync_val_compare_and_swap ( T__exchVal , ...)2。其中，__p 是指向要与 __compVal 比较的变量的指针，
+__compVal 是要与 __p 指向的变量的值进行比较的值，__exchVal 是要存储在指向的地址的值2。这个函数返回 __p 指向的变量的初始值2。
+这个函数在 IBM2 和 GCC1 的文档中都有详细的描述。你可以参考这些文档来了解更多关于这个函数的信息。希望这个答案对你有所帮助！
+
+
+是不是只要是GCC编译的程序，都可以用到这个函数？
+是的，__sync_val_compare_and_swap 是 GNU编译器集合（GCC） 提供的内置函数。只要你的程序是用 GCC 编译的，你就可以在你的程序中使用这个函数。
+但是，你需要注意的是，这个函数是 GCC 的特性，不是 C 或 C++ 标准的一部分。因此，如果你的代码需要在非 GCC 环境中编译，你可能需要找到一个替代的
+实现或者使用其他的原子操作库，比如 C++11 提供的 <atomic> 库。希望这个答案对你有所帮助！（已编辑）
+
+
+////////////////
+
+__sync_synchronize  这个函数是哪里提供的？
+__sync_synchronize 是由 GNU Compiler Collection (GCC) 提供的内置函数1。这些函数是为了与 Intel Itanium Processor-specific Application Binary Interface
+描述的函数兼容而设计的1。这些函数在 GCC 中的实现是基于 __atomic 内置函数1。新的代码应该使用 __atomic 内置函数，而不是 __sync 内置函数1。
+这就是 __sync_synchronize 函数的来源。
+
+*/

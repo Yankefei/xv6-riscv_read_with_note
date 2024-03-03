@@ -102,7 +102,7 @@ filestat(struct file *f, uint64 addr)
 }
 
 // Read from file f.
-// addr is a user virtual address.
+// addr is a user virtual address.     come from  sys_read
 int
 fileread(struct file *f, uint64 addr, int n)
 {

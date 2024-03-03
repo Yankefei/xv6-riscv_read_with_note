@@ -460,7 +460,7 @@ scheduler(void)
         // before jumping back to us.
         p->state = RUNNING;
         c->proc = p;
-        swtch(&c->context, &p->context);
+        swtch(&c->context, &p->context);  // set p->context to ready, and set this time reg to mycpu->context (run proc->context)
 
         // Process is done running for now.
         // It should have changed its p->state before coming back.
@@ -494,7 +494,7 @@ sched(void)
     panic("sched interruptible");
 
   intena = mycpu()->intena;
-  swtch(&p->context, &mycpu()->context);
+  swtch(&p->context, &mycpu()->context);   // save current reg in old, and load reg from new (run mycpu->context)
   mycpu()->intena = intena;
 }
 
@@ -544,7 +544,7 @@ sleep(void *chan, struct spinlock *lk)
   // (wakeup locks p->lock),
   // so it's okay to release lk.
 
-  acquire(&p->lock);  //DOC: sleeplock1
+  acquire(&p->lock);  //DOC: sleeplock1           // 获取进程锁
   release(lk);
 
   // Go to sleep.
@@ -570,7 +570,7 @@ wakeup(void *chan)
 
   for(p = proc; p < &proc[NPROC]; p++) {
     if(p != myproc()){
-      acquire(&p->lock);
+      acquire(&p->lock);                               // 使用进程锁
       if(p->state == SLEEPING && p->chan == chan) {
         p->state = RUNNABLE;
       }
@@ -681,3 +681,17 @@ procdump(void)
     printf("\n");
   }
 }
+
+
+/**
+ * scheduler() {
+ *  // in the past
+ *  swtch(&c->context, &p->context);  // set p->context to ready, and set this time reg to mycpu->context (run proc->context, save mycpu->context)
+ * }
+ * 
+ * sched() {
+ *  // now
+ *  swtch(&p->context, &mycpu()->context);   // save current reg in old, and load reg from new (run mycpu->context, save proc->context)
+ * }
+ * 
+*/

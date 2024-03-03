@@ -7,7 +7,7 @@
 
 .globl swtch
 swtch:
-        sd ra, 0(a0)
+        sd ra, 0(a0)   #   ra -> 0(a0)
         sd sp, 8(a0)
         sd s0, 16(a0)
         sd s1, 24(a0)
@@ -22,7 +22,7 @@ swtch:
         sd s10, 96(a0)
         sd s11, 104(a0)
 
-        ld ra, 0(a1)
+        ld ra, 0(a1)    #  0(a1)  ->  ra
         ld sp, 8(a1)
         ld s0, 16(a1)
         ld s1, 24(a1)
